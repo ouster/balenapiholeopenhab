@@ -1,19 +1,56 @@
-version: '3'
+version: '2.1'
+
+volumes:
+  pihole_config:
+  dnsmasq_config:
 
 services:
-  homeassistant:
-    container_name: home-assistant
-    image: homeassistant/home-assistant
-    environment:
-      # This is the required way to set a timezone on macOS and differs from the Linux compose file
-      - TZ=Australia/Melbourne
+  pihole:
+    build: ./pihole
+    privileged: true
+    restart: always
     volumes:
-      - ./homeassistant/config:/config
+      - 'pihole_config:/etc/pihole'
+      - 'dnsmasq_config:/etc/dnsmasq.d'
+    cap_add:
+      - 'NET_ADMIN'
+    dns:
+      - '127.0.0.1'
+      - '1.1.1.1'
+    network_mode: host
+
+  # optional upstream resolver: https://github.com/jedisct1/dnscrypt-proxy
+  # set pihole DNS1 and DNS2 service variables to 127.0.0.1:5300 to use this for upstream DNS
+  # otherwise comment out this block to completely remove the service
+  dnscrypt-proxy:
+    build: ./dnscrypt-proxy
+    ports:
+      - '5300:53/tcp'
+      - '5300:53/udp'
+    dns:
+      - '127.0.0.1'
+      - '1.1.1.1'
+
+  homeassistant:
+    #image: homeassistant/raspberrypi3-homeassistant:0.51.2
+    image: homeassistant/raspberrypi3-homeassistant:latest
+    network_mode: "host"
+    privileged: true
     restart: always
     ports:
-      # Also required for macOS since the network directive in docker-compose does not work
-      - "8123:8123"
+            - 0.0.0.0:8123:8123
+    volumes:
+      - /usr/share/zoneinfo/Australia/Melbourne:/etc/localtime
+      - ./homeassistant/config:/config
+    depends_on:
+      - mosquitto
 
-# Add this or docker-compose will complain that it did not find the key for locally mapped volume
-volumes:
-  config:
+  mosquitto:
+    build:
+      context: ./mosquitto/build
+    restart: always
+    ports:
+     - 0.0.0.0:1883:1883
+    volumes:
+     - ./mosquitto/config/auth.conf:/etc/mosquitto/conf.d/auth.conf:ro
+     - ./mosquitto/config/users.passwd:/etc/mosquitto/users.passwd:ro
