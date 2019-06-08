@@ -3,6 +3,7 @@ version: '2.1'
 volumes:
   pihole_config:
   dnsmasq_config:
+  ha_config:
 
 services:
   pihole:
@@ -12,6 +13,7 @@ services:
     volumes:
       - 'pihole_config:/etc/pihole'
       - 'dnsmasq_config:/etc/dnsmasq.d'
+      - 'ha_config:/etc/homeassistant'
     cap_add:
       - 'NET_ADMIN'
     dns:
@@ -40,7 +42,7 @@ services:
     ports:
             - 0.0.0.0:8123:8123
     volumes:
-      - ./homeassistant/config:/config
+      - 'ha_config:/config'
     depends_on:
       - mosquitto
 
