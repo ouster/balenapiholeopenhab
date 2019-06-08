@@ -3,7 +3,6 @@ version: '2.1'
 volumes:
   pihole_config:
   dnsmasq_config:
-  ha_config:
 
 services:
   pihole:
@@ -13,45 +12,9 @@ services:
     volumes:
       - 'pihole_config:/etc/pihole'
       - 'dnsmasq_config:/etc/dnsmasq.d'
-      - 'ha_config:/etc/homeassistant'
     cap_add:
       - 'NET_ADMIN'
     dns:
       - '127.0.0.1'
       - '1.1.1.1'
     network_mode: host
-
-  # optional upstream resolver: https://github.com/jedisct1/dnscrypt-proxy
-  # set pihole DNS1 and DNS2 service variables to 127.0.0.1:5300 to use this for upstream DNS
-  # otherwise comment out this block to completely remove the service
-  dnscrypt-proxy:
-    build: ./dnscrypt-proxy
-    ports:
-      - '5300:53/tcp'
-      - '5300:53/udp'
-    dns:
-      - '127.0.0.1'
-      - '1.1.1.1'
-
-  homeassistant:
-    #image: homeassistant/raspberrypi3-homeassistant:0.51.2
-    image: homeassistant/raspberrypi3-homeassistant:latest
-    network_mode: "host"
-    privileged: true
-    restart: always
-    ports:
-            - 0.0.0.0:8123:8123
-    volumes:
-      - 'ha_config:/config'
-    depends_on:
-      - mosquitto
-
-  mosquitto:
-    build:
-      context: ./mosquitto/build
-    restart: always
-    ports:
-     - 0.0.0.0:1883:1883
-    volumes:
-     - ./mosquitto/config/auth.conf:/etc/mosquitto/conf.d/auth.conf:ro
-     - ./mosquitto/config/users.passwd:/etc/mosquitto/users.passwd:ro
