@@ -18,3 +18,15 @@ services:
       - '127.0.0.1'
       - '1.1.1.1'
     network_mode: host
+
+  # optional upstream resolver: https://github.com/jedisct1/dnscrypt-proxy
+  # set pihole DNS1 and DNS2 service variables to 127.0.0.1:5300 to use this for upstream DNS
+  # otherwise comment out this block to completely remove the service
+  dnscrypt-proxy:
+    build: ./dnscrypt-proxy
+    ports:
+      - '5300:53/tcp'
+      - '5300:53/udp'
+    dns:
+      - '127.0.0.1'
+      - '1.1.1.1'
