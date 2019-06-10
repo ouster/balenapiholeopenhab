@@ -3,6 +3,7 @@ version: '2.1'
 volumes:
   pihole_config:
   dnsmasq_config:
+  ha_config:
 
 services:
   pihole:
@@ -30,3 +31,21 @@ services:
     dns:
       - '127.0.0.1'
       - '1.1.1.1'
+
+
+  homeassistant:
+    image: homeassistant/raspberrypi3-homeassistant:latest
+    network_mode: "host"
+    privileged: true
+    restart: always
+    ports:
+      - 0.0.0.0:8123:8123
+    volumes:
+      - 'ha_config:/config'
+    depends_on:
+      - mqtt
+
+  mqtt:
+      image: arm32v6/eclipse-mosquitto
+      ports:
+        - "1883:1883"
