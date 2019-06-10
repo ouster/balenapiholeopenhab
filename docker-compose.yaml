@@ -33,37 +33,19 @@ services:
       - '127.0.0.1'
       - '1.1.1.1'
 
-
-  # homeassistant:
-  #   image: homeassistant/raspberrypi3-homeassistant:latest
-  #   network_mode: "host"
-  #   privileged: true
-  #   restart: always
-  #   ports:
-  #     - 0.0.0.0:8123:8123
-  #   volumes:
-  #     - 'ha_config:/config'
-  #   depends_on:
-  #     - mqtt
-
     homebridge:
       build: ./homebridge
-      network_mode: "host"
+      network_mode: host
       privileged: true
       restart: always
       ports:
-        - 0.0.0.0:8123:8123
+        - '0.0.0.0:8123:8123'
       environment:
       - TZ=Australia/Melbourne
       - PGID=1000
       - PUID=1000
     volumes:
       - 'homebridge_config:/homebridge'
-
-  mqtt:
-      image: arm32v6/eclipse-mosquitto
-      ports:
-        - '1883:1883'
 
   nodered:
     image: nodered/node-red-docker:rpi-v8
@@ -73,3 +55,9 @@ services:
       - '1880:1880' 
     user: 1000:1000
     restart: always
+
+  mqtt:
+      image: arm32v6/eclipse-mosquitto
+      restart: always
+      ports:
+        - '1883:1883'
