@@ -1,10 +1,12 @@
-version: '2.1'
+version: '2.2'
 
 volumes:
   pihole_config:
   dnsmasq_config:
-  homebridge_config:
   node-red_config:
+  openhab_addons:
+  openhab_conf:
+  openhab_userdata:
 
 services:
   pihole:
@@ -33,20 +35,21 @@ services:
       - '127.0.0.1'
       - '1.1.1.1'
 
-  homebridge:
-    build: ./homebridge
+  openHAB:
+    image: openhab/openhab:latest-armhf
     network_mode: host
     privileged: true
     restart: always
-    environment:
-      - TZ=Australia/Melbourne
-      - PGID=1000
-      - PUID=1000
-      - HOMEBRIDGE_CONFIG_UI=1
-      - HOMEBRIDGE_CONFIG_UI_PORT=8080
-      - HOMEBRIDGE_OPTS=-I
     volumes:
-      - 'homebridge_config:/homebridge'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - 'openhab_addons:/openhab/addons'
+      - 'openhab_conf:/openhab/conf'
+      - 'openhab_userdata:/openhab/userdata'
+    environment:
+      OPENHAB_HTTP_PORT: 8080
+      OPENHAB_HTTPS_PORT: 8443
+      EXTRA_JAVA_OPTS: '-Duser.timezone=Australia/Melbourne'
 
   nodered:
     image: nodered/node-red-docker:rpi-v8
