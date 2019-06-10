@@ -33,14 +33,14 @@ services:
       - '127.0.0.1'
       - '1.1.1.1'
 
-    homebridge:
-      build: ./homebridge
-      network_mode: host
-      privileged: true
-      restart: always
-      ports:
-        - '0.0.0.0:8123:8123'
-      environment:
+  homebridge:
+    build: ./homebridge
+    network_mode: host
+    privileged: true
+    restart: always
+    ports:
+      - '0.0.0.0:8123:8123'
+    environment:
       - TZ=Australia/Melbourne
       - PGID=1000
       - PUID=1000
