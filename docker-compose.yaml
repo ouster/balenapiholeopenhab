@@ -52,7 +52,7 @@ services:
         - "1883:1883"
 
   nodered:
-    image: nodered/node-red-docker:
+    image: nodered/node-red-docker:rpi-v8
     volumes:
       - 'node-red_config:/data'
     ports:
