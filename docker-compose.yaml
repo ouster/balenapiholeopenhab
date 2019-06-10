@@ -36,7 +36,7 @@ services:
       - '1.1.1.1'
 
   openHAB:
-    image: openhab/openhab:latest-armhf
+    image: openhab/openhab:2.4.0-armhf-alpine
     network_mode: host
     privileged: true
     restart: always
