@@ -49,13 +49,13 @@ services:
   mqtt:
       image: arm32v6/eclipse-mosquitto
       ports:
-        - "1883:1883"
+        - '1883:1883'
 
   nodered:
     image: nodered/node-red-docker:rpi-v8
     volumes:
       - 'node-red_config:/data'
     ports:
-      - “1880:1880”
+      - '1880:1880' 
     user: 1000:1000
     restart: always
