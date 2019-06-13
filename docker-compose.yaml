@@ -13,7 +13,7 @@ services:
   speedtest:
     build: ./speedtest
     volumes:
-      - 'speedtest_config.ini:/src/config.ini'
+      - 'speedtest_config:/src/config.ini'
     restart: always
     network_mode: host
 
