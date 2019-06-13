@@ -1,6 +1,7 @@
 version: '2.1'
 
 volumes:
+  speedtest_config:
   pihole_config:
   dnsmasq_config:
   node-red_config:
@@ -9,6 +10,13 @@ volumes:
   openhab_userdata:
 
 services:
+  speedtest:
+    build: ./speedtest
+    volumes:
+      - 'speedtest_config.ini:/src/config.ini'
+    restart: always
+    network_mode: host
+
   pihole:
     build: ./pihole
     privileged: true
